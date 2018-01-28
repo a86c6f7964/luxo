@@ -2,6 +2,7 @@ use std::{io, result, str};
 use std::path::{Path, PathBuf};
 use std::fs::File;
 use std::io::Write;
+use std::io::Read;
 use std::fs;
 
 #[derive(Debug)]
@@ -39,6 +40,22 @@ impl Luxo {
         }
 
         Ok(Luxo { folder: path })
+    }
+
+    pub fn read<F, T>(&self, key: &[u8], with_value: F) -> Result<T>
+    where
+        F: Fn(&[u8]) -> Result<T>,
+    {
+        let k = str::from_utf8(&key)?;
+        let mut key_path = self.folder.to_path_buf();
+        key_path.push(format!("{}.key", k));
+
+        let len = fs::metadata(&key_path)?.len();
+        let mut buffer: Vec<u8> = Vec::with_capacity(len as usize);
+
+        let mut file = File::open(key_path)?;
+        file.read_to_end(&mut buffer)?;
+        with_value(&buffer)
     }
 
     pub fn write(&self, key: &[u8], value: &[u8]) -> Result<usize> {
