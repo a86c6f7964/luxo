@@ -10,7 +10,7 @@ pub fn example(folder: String) {
     for i in 1..20 {
         let written = luxo.write(
             format!("test{}", i).as_bytes(),
-            format!("value {}\n", i).as_bytes()
+            format!("value {}\n", i).as_bytes(),
         ).unwrap();
         println!("able to write [test{}] length {}", i, written)
     }

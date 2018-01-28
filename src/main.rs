@@ -1,7 +1,7 @@
-#[macro_use]
-extern crate serde_derive;
 extern crate docopt;
 extern crate luxo;
+#[macro_use]
+extern crate serde_derive;
 
 use docopt::Docopt;
 
@@ -29,8 +29,7 @@ struct Args {
 
 fn main() {
     let args: Args = Docopt::new(USAGE)
-        .and_then(|d| d.version(Some(VERSION.to_string()))
-        .deserialize())
+        .and_then(|d| d.version(Some(VERSION.to_string())).deserialize())
         .unwrap_or_else(|e| e.exit());
 
     if args.cmd_stats {

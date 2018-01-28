@@ -1,5 +1,5 @@
 use std::{io, result, str};
-use std::path::{Path,PathBuf};
+use std::path::{Path, PathBuf};
 use std::fs::File;
 use std::io::Write;
 use std::fs;
@@ -42,14 +42,13 @@ impl Luxo {
     }
 
     pub fn write(&self, key: &[u8], value: &[u8]) -> Result<usize> {
-
         let k = str::from_utf8(&key)?;
 
         let mut temp_path = self.folder.to_path_buf();
         temp_path.push(format!("{}.key.tmp", k));
         let mut end_path = self.folder.to_path_buf();
         end_path.push(format!("{}.key", k));
-        
+
         {
             let mut file = File::create(temp_path.as_path())?;
             file.write_all(value)?;
