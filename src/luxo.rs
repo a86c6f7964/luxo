@@ -1,9 +1,8 @@
 use std::{io, result, str};
 use std::path::{Path, PathBuf};
 use std::fs::File;
-use std::io::Write;
-use std::io::Read;
-use std::io::BufReader;
+use std::io::{Read, Write, BufRead, BufReader};
+use std::io::copy;
 use std::fs;
 
 #[derive(Debug)]
@@ -26,9 +25,9 @@ impl From<str::Utf8Error> for Error {
 
 type Result<T> = result::Result<T, Error>;
 
-pub trait Luxo<T: Read> {
-    fn read(&self, key: &[u8]) -> Result<BufReader<T>>;
-    fn write(&self, key: &[u8], value: &[u8]) -> Result<usize>;
+pub trait Luxo<R: Read> {
+    fn read(&self, key: &[u8]) -> Result<BufReader<R>>;
+    fn write(&self, key: &[u8], value: &mut BufRead) -> Result<u64>;
 }
 
 pub fn open_with_folder(folder: String) -> Result<Box<Luxo<File>>> {
@@ -62,7 +61,7 @@ impl Luxo<File> for FolderBackedLuxo {
         Ok(reader)
     }
 
-    fn write(&self, key: &[u8], value: &[u8]) -> Result<usize> {
+    fn write(&self, key: &[u8], value: &mut BufRead) -> Result<u64> {
         let k = str::from_utf8(&key)?;
 
         let mut temp_path = self.folder.to_path_buf();
@@ -70,9 +69,10 @@ impl Luxo<File> for FolderBackedLuxo {
         let mut end_path = self.folder.to_path_buf();
         end_path.push(format!("{}.key", k));
 
+        let len;
         {
             let mut file = File::create(temp_path.as_path())?;
-            file.write_all(value)?;
+            len = copy(value, &mut file)?;
             file.flush()?;
             file.sync_all()?;
         }
@@ -83,6 +83,6 @@ impl Luxo<File> for FolderBackedLuxo {
         // todo: folder fsync
         // https://lwn.net/Articles/457667/
 
-        Ok(value.len())
+        Ok(len)
     }
 }
