@@ -3,6 +3,7 @@ use std::path::{Path, PathBuf};
 use std::fs::File;
 use std::io::Write;
 use std::io::Read;
+use std::io::BufReader;
 use std::fs;
 
 #[derive(Debug)]
@@ -25,13 +26,12 @@ impl From<str::Utf8Error> for Error {
 
 type Result<T> = result::Result<T, Error>;
 
-pub trait Luxo {
-    fn read(&self, key: &[u8], value: &mut Vec<u8>) -> Result<usize>;
-
+pub trait Luxo<T: Read> {
+    fn read(&self, key: &[u8]) -> Result<BufReader<T>>;
     fn write(&self, key: &[u8], value: &[u8]) -> Result<usize>;
 }
 
-pub fn open_with_folder(folder: String) -> Result<Box<Luxo>> {
+pub fn open_with_folder(folder: String) -> Result<Box<Luxo<File>>> {
     let path = fs::canonicalize(Path::new(&folder))?;
 
     if !path.is_dir() {
@@ -46,15 +46,20 @@ pub struct FolderBackedLuxo {
     folder: PathBuf,
 }
 
-impl Luxo for FolderBackedLuxo {
+pub trait Callback {
+    fn with_u8(&self, value: &[u8]) -> ();
+}
+
+impl Luxo<File> for FolderBackedLuxo {
     // https://bryce.fisher-fleig.org/blog/strategies-for-returning-references-in-rust/index.html
-    fn read(&self, key: &[u8], value: &mut Vec<u8>) -> Result<usize> {
+    fn read(&self, key: &[u8]) -> Result<BufReader<File>> {
         let k = str::from_utf8(&key)?;
         let mut key_path = self.folder.to_path_buf();
         key_path.push(format!("{}.key", k));
 
-        let mut file = File::open(key_path)?;
-        Ok(file.read_to_end(value)?)
+        let file = File::open(key_path)?;
+        let reader = BufReader::new(file);
+        Ok(reader)
     }
 
     fn write(&self, key: &[u8], value: &[u8]) -> Result<usize> {
