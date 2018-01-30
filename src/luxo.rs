@@ -25,40 +25,39 @@ impl From<str::Utf8Error> for Error {
 
 type Result<T> = result::Result<T, Error>;
 
+pub trait Luxo {
+    fn read(&self, key: &[u8], value: &mut Vec<u8>) -> Result<usize>;
+
+    fn write(&self, key: &[u8], value: &[u8]) -> Result<usize>;
+}
+
+pub fn open_with_folder(folder: String) -> Result<Box<Luxo>> {
+    let path = fs::canonicalize(Path::new(&folder))?;
+
+    if !path.is_dir() {
+        fs::create_dir(&path)?;
+    }
+
+    Ok(Box::new(FolderBackedLuxo { folder: path }))
+}
+
 #[derive(Debug)]
-pub struct Luxo {
+pub struct FolderBackedLuxo {
     folder: PathBuf,
 }
 
-impl Luxo {
+impl Luxo for FolderBackedLuxo {
     // https://bryce.fisher-fleig.org/blog/strategies-for-returning-references-in-rust/index.html
-    pub fn open(folder: String) -> Result<Luxo> {
-        let path = fs::canonicalize(Path::new(&folder))?;
-
-        if !path.is_dir() {
-            fs::create_dir(&path)?;
-        }
-
-        Ok(Luxo { folder: path })
-    }
-
-    pub fn read<F, T>(&self, key: &[u8], with_value: F) -> Result<T>
-    where
-        F: Fn(&[u8]) -> Result<T>,
-    {
+    fn read(&self, key: &[u8], value: &mut Vec<u8>) -> Result<usize> {
         let k = str::from_utf8(&key)?;
         let mut key_path = self.folder.to_path_buf();
         key_path.push(format!("{}.key", k));
 
-        let len = fs::metadata(&key_path)?.len();
-        let mut buffer: Vec<u8> = Vec::with_capacity(len as usize);
-
         let mut file = File::open(key_path)?;
-        file.read_to_end(&mut buffer)?;
-        with_value(&buffer)
+        Ok(file.read_to_end(value)?)
     }
 
-    pub fn write(&self, key: &[u8], value: &[u8]) -> Result<usize> {
+    fn write(&self, key: &[u8], value: &[u8]) -> Result<usize> {
         let k = str::from_utf8(&key)?;
 
         let mut temp_path = self.folder.to_path_buf();

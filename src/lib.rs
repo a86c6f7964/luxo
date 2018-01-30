@@ -1,5 +1,4 @@
 mod luxo;
-use luxo::Luxo;
 use std::str;
 
 pub fn stats(folder: String) {
@@ -7,7 +6,7 @@ pub fn stats(folder: String) {
 }
 
 pub fn example(folder: String) {
-    let luxo = Luxo::open(folder).unwrap();
+    let luxo = luxo::open_with_folder(folder).unwrap();
     for i in 1..20 {
         let written = luxo.write(
             format!("test{}", i).as_bytes(),
@@ -16,9 +15,8 @@ pub fn example(folder: String) {
         println!("able to write [test{}] length {}", i, written)
     }
     for i in 1..20 {
-        let read: String = luxo.read(format!("test{}", i).as_bytes(), |bytes| {
-            Ok(str::from_utf8(bytes)?.to_owned())
-        }).unwrap();
-        println!("able to read [test{}] of [{}]", i, read)
+        let mut value = Vec::new();
+        let read = luxo.read(format!("test{}", i).as_bytes(), &mut value).unwrap();
+        println!("able to read [test{}] of L:{}[{}]", i, read, str::from_utf8(&value).unwrap())
     }
 }
