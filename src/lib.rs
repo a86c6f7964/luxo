@@ -5,9 +5,13 @@ pub fn stats(folder: &String) {
     println!("stats {}", folder)
 }
 
-pub fn example(folder: &String) {
+pub fn example(folder: &String, store: &String) {
     println!("open folder [{}]", folder);
-    let luxo = luxo::open_with_folder(folder).expect(&format!("unable to open [{}]", folder));
+    let luxo = match store.as_ref() {
+        "simple" => Ok(luxo::open_with_folder(folder)
+            .expect(&format!("unable to open [{}/{}]", folder, store))),
+        _ => Err(format!("unknown store [{}]", store)),
+    }.unwrap();
 
     for i in 1..2000 {
         let _written = luxo.write(

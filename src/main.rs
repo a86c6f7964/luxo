@@ -11,19 +11,21 @@ Luxo CLI
 
 Usage:
   luxo stats <folder>
-  luxo example <folder>
+  luxo example <folder> [--store=<store>]
   luxo (-h | --help)
   luxo --version
 
 Options:
-  -h --help     Show this screen.
-  --version     Show version.
+  -h --help        Show this screen.
+  --store=<store>  Type of store [default: simple].
+  --version        Show version.
 ";
 
 #[derive(Debug, Deserialize)]
 struct Args {
     cmd_stats: bool,
     cmd_example: bool,
+    flag_store: String,
     arg_folder: String,
 }
 
@@ -35,6 +37,6 @@ fn main() {
     if args.cmd_stats {
         luxo::stats(&args.arg_folder)
     } else if args.cmd_example {
-        luxo::example(&args.arg_folder)
+        luxo::example(&args.arg_folder, &args.flag_store)
     }
 }
