@@ -29,8 +29,8 @@ pub trait Luxo<R: Read> {
     fn write(&self, key: &[u8], value: &mut BufRead) -> Result<u64>;
 }
 
-pub fn open_with_folder(folder: String) -> Result<Box<Luxo<File>>> {
-    let path = fs::canonicalize(Path::new(&folder))?;
+pub fn open_with_folder(folder: &String) -> Result<Box<Luxo<File>>> {
+    let path = fs::canonicalize(Path::new(folder))?;
 
     if !path.is_dir() {
         fs::create_dir(&path)?;

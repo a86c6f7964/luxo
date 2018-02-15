@@ -1,12 +1,12 @@
 mod luxo;
 use std::io::Read;
 
-pub fn stats(folder: String) {
+pub fn stats(folder: &String) {
     println!("stats {}", folder)
 }
 
-pub fn example(folder: String) {
-    let luxo = luxo::open_with_folder(folder).unwrap();
+pub fn example(folder: &String) {
+    let luxo = luxo::open_with_folder(folder).expect(&format!("unable to open [{}]", folder));
 
     for i in 1..20 {
         let written = luxo.write(
@@ -22,7 +22,7 @@ pub fn example(folder: String) {
             .expect("unable to find buffer");
 
         let mut value = String::new();
-        let num: usize = buf.read_to_string(&mut value)
+        let num = buf.read_to_string(&mut value)
             .expect("unable to read to end");
 
         println!("able to read [test{}] of L:{}[{}]", i, num, value)

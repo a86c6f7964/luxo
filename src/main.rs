@@ -33,8 +33,8 @@ fn main() {
         .unwrap_or_else(|e| e.exit());
 
     if args.cmd_stats {
-        luxo::stats(args.arg_folder)
+        luxo::stats(&args.arg_folder)
     } else if args.cmd_example {
-        luxo::example(args.arg_folder)
+        luxo::example(&args.arg_folder)
     }
 }
