@@ -18,12 +18,13 @@ pub fn example(folder: String) {
     }
 
     for i in 1..20 {
-        let mut buf = luxo.read(format!("test{}", i).as_bytes()).expect("unable to find buffer");
+        let mut buf = luxo.read(format!("test{}", i).as_bytes())
+            .expect("unable to find buffer");
 
         let mut value = String::new();
-        let num: usize = buf.read_to_string(&mut value).expect("unable to read to end");
+        let num: usize = buf.read_to_string(&mut value)
+            .expect("unable to read to end");
 
         println!("able to read [test{}] of L:{}[{}]", i, num, value)
-
     }
 }

@@ -1,9 +1,8 @@
-use std::{io, result, str};
-use std::path::{Path, PathBuf};
-use std::fs::File;
-use std::io::{Read, Write, BufRead, BufReader};
-use std::io::copy;
 use std::fs;
+use std::fs::File;
+use std::{io, result, str};
+use std::io::{copy, BufRead, BufReader, Read, Write};
+use std::path::{Path, PathBuf};
 
 #[derive(Debug)]
 pub enum Error {
