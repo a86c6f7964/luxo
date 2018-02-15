@@ -8,7 +8,7 @@ pub fn stats(folder: &String) {
 pub fn example(folder: &String, store: &String) {
     println!("open folder [{}]", folder);
     let luxo = match store.as_ref() {
-        "simple" => Ok(luxo::open_with_folder(folder)
+        "simple" => Ok(luxo::open_simple(folder)
             .expect(&format!("unable to open [{}/{}]", folder, store))),
         _ => Err(format!("unknown store [{}]", store)),
     }.unwrap();

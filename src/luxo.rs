@@ -29,18 +29,18 @@ pub trait Luxo<R: Read> {
     fn write(&self, key: &[u8], value: &mut BufRead) -> Result<u64>;
 }
 
-pub fn open_with_folder(folder: &String) -> Result<Box<Luxo<File>>> {
+pub fn open_simple(folder: &String) -> Result<Box<Luxo<File>>> {
     let path = Path::new(folder);
     if !path.is_dir() {
         fs::create_dir(&path)?;
     }
 
     let path = fs::canonicalize(path)?;
-    Ok(Box::new(FolderBackedLuxo { folder: path }))
+    Ok(Box::new(SimpleLuxo { folder: path }))
 }
 
 #[derive(Debug)]
-pub struct FolderBackedLuxo {
+pub struct SimpleLuxo {
     folder: PathBuf,
 }
 
@@ -48,7 +48,7 @@ pub trait Callback {
     fn with_u8(&self, value: &[u8]) -> ();
 }
 
-impl Luxo<File> for FolderBackedLuxo {
+impl Luxo<File> for SimpleLuxo {
     // https://bryce.fisher-fleig.org/blog/strategies-for-returning-references-in-rust/index.html
     fn read(&self, key: &[u8]) -> Result<BufReader<File>> {
         let k = str::from_utf8(&key)?;
