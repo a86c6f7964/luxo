@@ -30,12 +30,12 @@ pub trait Luxo<R: Read> {
 }
 
 pub fn open_with_folder(folder: &String) -> Result<Box<Luxo<File>>> {
-    let path = fs::canonicalize(Path::new(folder))?;
-
+    let path = Path::new(folder);
     if !path.is_dir() {
         fs::create_dir(&path)?;
     }
 
+    let path = fs::canonicalize(path)?;
     Ok(Box::new(FolderBackedLuxo { folder: path }))
 }
 
