@@ -1,7 +1,3 @@
-mod example;
-pub mod duration;
-pub mod simple;
-
 use std::{io, result, str};
 use std::io::{copy, BufRead, BufReader, Read, Write};
 use std::path::{Path, PathBuf};
@@ -90,6 +86,7 @@ impl Luxo<File> for SimpleLuxo {
         Ok(len)
     }
 }
+
 use std::time::Instant;
 
 pub fn example(folder: &String, store: &String) {
@@ -143,6 +140,7 @@ pub fn example(folder: &String, store: &String) {
         now.elapsed().as_millis()
     );
 }
+
 use std::time::Duration;
 
 pub trait Millis {
