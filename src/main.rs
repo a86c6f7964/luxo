@@ -4,6 +4,8 @@ extern crate luxo;
 extern crate serde_derive;
 
 use docopt::Docopt;
+mod duration;
+mod example;
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const USAGE: &'static str = "
@@ -37,6 +39,6 @@ fn main() {
     if args.cmd_stats {
         luxo::stats(&args.arg_folder)
     } else if args.cmd_example {
-        luxo::example(&args.arg_folder, &args.flag_store)
+        example::example(&args.arg_folder, &args.flag_store)
     }
 }
