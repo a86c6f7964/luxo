@@ -4,6 +4,7 @@ extern crate luxo;
 extern crate serde_derive;
 
 use docopt::Docopt;
+mod example;
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const USAGE: &'static str = "
