@@ -1,33 +1,26 @@
 mod luxo;
+use luxo::open_simple;
+mod duration;
+use duration::Millis;
+
 use std::time::Instant;
-use std::time::Duration;
 use std::io::Read;
 
 pub fn stats(folder: &String) {
     println!("stats {}", folder)
 }
 
-trait Millis {
-    fn as_millis(&self) -> u64;
-}
-
-impl Millis for Duration {
-    fn as_millis(&self) -> u64 {
-        return (self.as_secs() * 1_000) + (self.subsec_nanos() / 1_000_000) as u64;
-    }
-}
-
 pub fn example(folder: &String, store: &String) {
     println!("open folder [{}]", folder);
     let luxo = match store.as_ref() {
         "simple" => {
-            Ok(luxo::open_simple(folder).expect(&format!("unable to open [{}/{}]", folder, store)))
+            Ok(open_simple(folder).expect(&format!("unable to open [{}/{}]", folder, store)))
         }
         _ => Err(format!("unknown store [{}]", store)),
     }.unwrap();
 
     let now = Instant::now();
-    let num_keys = 2000;
+    let num_keys = 20000;
     let mut keys: Vec<Vec<u8>> = Vec::with_capacity(num_keys);
     let mut values: Vec<Vec<u8>> = Vec::with_capacity(num_keys);
     for i in 1..num_keys {
