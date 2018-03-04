@@ -2,12 +2,16 @@ use duration::Millis;
 use std::time::Instant;
 use luxo::open_simple;
 use std::io::Read;
+use luxo::open_memory;
 
 pub fn example(folder: &String, store: &String) {
     println!("open folder [{}]", folder);
-    let luxo = match store.as_ref() {
+    let mut luxo = match store.as_ref() {
         "simple" => {
             Ok(open_simple(folder).expect(&format!("unable to open [{}/{}]", folder, store)))
+        },
+        "memory" => {
+            Ok(open_memory().expect(&format!("unable to open [{}/{}]", folder, store)))
         }
         _ => Err(format!("unknown store [{}]", store)),
     }.unwrap();
@@ -40,10 +44,13 @@ pub fn example(folder: &String, store: &String) {
 
     for i in 0..num_keys - 1 {
         if let Some(key) = keys.get(i) {
-            let mut buf = luxo.read(key).expect("unable to find buffer");
-            let mut value = Vec::new();
-            buf.read_to_end(&mut value).expect("unable to read to end");
-            assert_eq!(value[..], values.get(i).expect("unable to find value")[..])
+            if let Some(mut buf) = luxo.read(key).expect("unable to find buffer") {
+                let mut value = Vec::new();
+                buf.read_to_end(&mut value).expect("unable to read to end");
+                assert_eq!(value[..], values.get(i).expect("unable to find value")[..])
+            } else {
+                panic!("unable to find key #{}", i)
+            }
         } else {
             panic!("unable to find key #{}", i)
         }

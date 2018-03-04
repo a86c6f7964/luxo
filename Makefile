@@ -1,5 +1,3 @@
-.PHONY: info devdeps fmt
-
 info:
 	@echo "Use fmt target to format code"
 
@@ -10,7 +8,8 @@ devdeps:
 release:
 	cargo build --release
 
-bench: release
+bench: release devdeps
+	sudo -v
 	hyperfine --prepare 'sync && sudo purge' 'target/release/luxo example /tmp/luxo/'
 	
 fmt:

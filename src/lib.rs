@@ -1,7 +1,9 @@
 use std::{io, result, str};
-use std::io::{BufRead, BufReader, Read};
+use std::io::{Read};
 mod simple;
 pub use simple::open_simple;
+mod memory;
+pub use memory::open_memory;
 
 #[derive(Debug)]
 pub enum Error {
@@ -23,9 +25,9 @@ impl From<str::Utf8Error> for Error {
 
 pub type Result<T> = result::Result<T, Error>;
 
-pub trait Luxo<R: Read> {
-    fn read(&self, key: &[u8]) -> Result<BufReader<R>>;
-    fn write(&self, key: &[u8], value: &mut BufRead) -> Result<u64>;
+pub trait Luxo {
+    fn read(&self, key: &[u8]) -> Result<Option<Box<Read>>>;
+    fn write(&mut self, key: &[u8], value: &mut Read) -> Result<u64>;
 }
 
 pub fn stats(folder: &String) {
