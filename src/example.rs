@@ -14,7 +14,7 @@ pub fn example(folder: &String, store: &String) {
     }.unwrap();
 
     let now = Instant::now();
-    let num_keys = 2;
+    let num_keys = 10000;
     let mut keys: Vec<Vec<u8>> = Vec::with_capacity(num_keys);
     let mut values: Vec<Vec<u8>> = Vec::with_capacity(num_keys);
     for i in 1..num_keys {
