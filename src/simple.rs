@@ -48,7 +48,11 @@ impl SimpleLuxo {
 
 impl Luxo for SimpleLuxo {
     // https://bryce.fisher-fleig.org/blog/strategies-for-returning-references-in-rust/index.html
-    fn read(&self, key: &[u8], read_value: &Fn(&mut Read) -> usize) -> Result<Option<usize>> {
+    fn read(
+        &self,
+        key: &[u8],
+        read_value: &mut FnMut(&mut Read) -> usize,
+    ) -> Result<Option<usize>> {
         let k = from_utf8(&key)?;
         let mut key_path = self.folder.to_path_buf();
         key_path.push(format!("{}.key", k));

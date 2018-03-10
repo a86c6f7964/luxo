@@ -26,7 +26,8 @@ impl From<str::Utf8Error> for Error {
 pub type Result<T> = result::Result<T, Error>;
 
 pub trait Luxo {
-    fn read(&self, key: &[u8], read_value: &Fn(&mut Read) -> usize) -> Result<Option<usize>>;
+    fn read(&self, key: &[u8], read_value: &mut FnMut(&mut Read) -> usize)
+        -> Result<Option<usize>>;
     fn write(&mut self, key: &[u8], value: &mut Read) -> Result<u64>;
 }
 

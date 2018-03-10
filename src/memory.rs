@@ -17,7 +17,11 @@ struct MemoryLuxo {
 }
 
 impl Luxo for MemoryLuxo {
-    fn read(&self, key: &[u8], read_value: &Fn(&mut Read) -> usize) -> Result<Option<usize>> {
+    fn read(
+        &self,
+        key: &[u8],
+        read_value: &mut FnMut(&mut Read) -> usize,
+    ) -> Result<Option<usize>> {
         if let Some(val) = self.int_map.get(key) {
             return Ok(Some(read_value(&mut val.as_slice())));
         } else {

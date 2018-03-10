@@ -41,13 +41,12 @@ pub fn example(folder: &String, store: &String) {
 
     for i in 0..num_keys - 1 {
         if let Some(key) = keys.get(i) {
-            if let Some(_) = luxo.read(key, &|buf| {
-                let mut value = Vec::new();
-                let res = buf.read_to_end(&mut value).expect("unable to read to end");
-                assert_eq!(value[..], values.get(i).expect("unable to find value")[..]);
-                res
+            let mut value = Vec::new();
+            if let Some(_) = luxo.read(key, &mut |buf| {
+                buf.read_to_end(&mut value).expect("unable to read to end")
             }).expect("unable to find buffer")
             {
+                assert_eq!(value[..], values.get(i).expect("unable to find value")[..]);
             } else {
                 panic!("unable to find key #{}", i)
             }
