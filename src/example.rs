@@ -19,7 +19,7 @@ pub fn example(folder: &String, store: &String) {
     let mut values: Vec<Vec<u8>> = Vec::with_capacity(num_keys);
     for i in 1..num_keys {
         let key = format!("test{}", i);
-        let value = format!("value {}", i);
+        let value = format!("value {} {:?}", i, now);
         keys.push(key.into_bytes());
         values.push(value.into_bytes());
     }
