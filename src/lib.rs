@@ -1,5 +1,5 @@
 use std::{io, result, str};
-use std::io::{Read};
+use std::io::Read;
 mod simple;
 pub use simple::open_simple;
 mod memory;
@@ -26,7 +26,7 @@ impl From<str::Utf8Error> for Error {
 pub type Result<T> = result::Result<T, Error>;
 
 pub trait Luxo {
-    fn read(&self, key: &[u8]) -> Result<Option<Box<Read>>>;
+    fn read(&self, key: &[u8], read_value: &Fn(&mut Read) -> usize) -> Result<Option<usize>>;
     fn write(&mut self, key: &[u8], value: &mut Read) -> Result<u64>;
 }
 

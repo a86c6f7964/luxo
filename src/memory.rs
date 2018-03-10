@@ -3,24 +3,26 @@ use super::Luxo;
 use std::io::Read;
 use std::collections::HashMap;
 
+type ByteString = Vec<u8>;
+
 pub fn open_memory() -> Result<Box<Luxo>> {
-    Ok(Box::new(MemoryLuxo { int_map: HashMap::new() }))
+    Ok(Box::new(MemoryLuxo {
+        int_map: HashMap::new(),
+    }))
 }
 
 #[derive(Debug)]
 struct MemoryLuxo {
-    int_map: HashMap<Vec<u8>, Vec<u8>>
+    int_map: HashMap<ByteString, ByteString>,
 }
 
 impl Luxo for MemoryLuxo {
-    fn read(&self, key: &[u8]) -> Result<Option<Box<Read>>> {
-        //let option: Option<&Vec<u8>> = self.int_map.get(key);
-        /*if let Some(val) = option {
-            return Ok(Some(Box::new(val.as_slice())))
+    fn read(&self, key: &[u8], read_value: &Fn(&mut Read) -> usize) -> Result<Option<usize>> {
+        if let Some(val) = self.int_map.get(key) {
+            return Ok(Some(read_value(&mut val.as_slice())));
         } else {
-            return Ok(None)
-        }*/
-        Ok(None)
+            return Ok(None);
+        }
     }
 
     fn write(&mut self, key: &[u8], value: &mut Read) -> Result<u64> {
