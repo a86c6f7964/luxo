@@ -33,16 +33,20 @@ impl SimpleLuxo {
     fn open(folder: PathBuf) -> SimpleLuxo {
         let mut key_path = folder.to_path_buf();
         key_path.push(".lock");
-        let key_path_str: &str = key_path.to_str().expect(&format!("unable to create lock string"));
-        let lock_file: File = File::create(&key_path).expect(&format!("unable to open lock [{}]", key_path_str));
-        lock_file.try_lock_exclusive().expect(&format!("unable to lock [{}]", key_path_str));
+        let key_path_str: &str = key_path
+            .to_str()
+            .expect(&format!("unable to create lock string"));
+        let lock_file: File =
+            File::create(&key_path).expect(&format!("unable to open lock [{}]", key_path_str));
+        lock_file
+            .try_lock_exclusive()
+            .expect(&format!("unable to lock [{}]", key_path_str));
 
         SimpleLuxo { folder, lock_file }
     }
 }
 
 impl Luxo for SimpleLuxo {
-
     // https://bryce.fisher-fleig.org/blog/strategies-for-returning-references-in-rust/index.html
     fn read(&self, key: &[u8], read_value: &Fn(&mut Read) -> usize) -> Result<Option<usize>> {
         let k = from_utf8(&key)?;
