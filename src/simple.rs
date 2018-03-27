@@ -62,7 +62,7 @@ impl Luxo for SimpleLuxo {
         Ok(Some(read_value(&mut reader)))
     }
 
-    fn write(&mut self, key: &[u8], value: &mut Read) -> Result<u64> {
+    fn write(&mut self, key: &[u8], size: usize, value: &mut Read) -> Result<u64> {
         let k = from_utf8(&key)?;
 
         let mut temp_path = self.folder.to_path_buf();

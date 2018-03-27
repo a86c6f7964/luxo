@@ -29,7 +29,7 @@ impl Luxo for MemoryLuxo {
         }
     }
 
-    fn write(&mut self, key: &[u8], value: &mut Read) -> Result<u64> {
+    fn write(&mut self, key: &[u8], size: usize, value: &mut Read) -> Result<u64> {
         let mut r = Vec::new();
         value.read_to_end(&mut r)?;
         let l = r.len();
